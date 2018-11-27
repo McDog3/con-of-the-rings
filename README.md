@@ -3,6 +3,14 @@
 * Clone repo
 * Import project into IntelliJ by selecting the `build.gradle` file within the project. IntelliJ should handle creating a local version of Gradle to handle the project.
 * Currently, a compilation tool such as [Koala](http://koala-app.com/) is needed to compile the SASS files
+Install Node.js, use npm commands to get packages we need: 
+
+`npm install --save-dev @babel/core @babel/cli @babel/preset-env @babel/preset-react`
+`npm install --save-dev webpack webpack-cli`
+`npm install --save-dev jquery`
+`npm install --save-dev babel-loader`
+
+Afterwards, you can compile the modules using `npx webpack --mode=development`
 
 
 ### Project setup TODO

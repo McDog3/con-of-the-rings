@@ -1,0 +1,31 @@
+{
+  "name": "con-of-the-rings",
+  "version": "1.0.0",
+  "description": "A website for Con of the Rings, a fan run convention held for Lord of the Rings: The Card Game",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch --mode=development",
+    "webpack": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/McDog3/con-of-the-rings.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/McDog3/con-of-the-rings/issues"
+  },
+  "homepage": "https://github.com/McDog3/con-of-the-rings#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.4",
+    "jquery": "^3.3.1",
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2"
+  }
+}
