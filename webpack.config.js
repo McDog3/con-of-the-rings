@@ -2,7 +2,7 @@ const path = require("path");
 const jsDirectory = "./src/main/resources/static/js";
 
 module.exports = {
-    entry: {likeButton: jsDirectory + '/like_button.js'},
+    entry: {home: jsDirectory + '/home.js'},
     module: {
         rules: [
             {
@@ -19,6 +19,9 @@ module.exports = {
     },
     resolve: {
         // extensions: [".js"]
+        alias: {
+            '@components': path.join(__dirname, './src/main/resources/static/js/components')
+        }
     },
     output: {
         path: path.resolve(jsDirectory, "dist"),
