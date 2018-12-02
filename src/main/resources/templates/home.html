@@ -15,22 +15,38 @@
     <link rel="stylesheet" th:href="@{'/css/home.css'}">
 </head>
 <body>
+<!--Make this a reusable react component? How would I capture img.src? -->
 <div class="container">
-    <div class="row">
-        <div class="col-xs-4">
-            <a href="/home"><img th:src="@{'/images/logo.png'}" alt="Con of the Rings logo" class="img-responsive"></a>
+
+    <div id="cotr_navbar"></div>
+    <div id="login_container"></div>
+    <!-- Basic NavBar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a href="/home"><img th:src="@{'/images/logo.png'}" alt="Con of the Rings logo" class="img-responsive"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Signup/Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Info</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Gallery</a>
+                </li>
+            </ul>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-4 offset-xs-8 offset-lg-8 offset-md-8">
-            <div id="login_container"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-4 col-xs-12">Column 1</div>
-        <div class="col-sm-4 col-xs-12">Column 2</div>
-        <div class="col-sm-4 col-xs-12">Column 3</div>
-    </div>
+    </nav>
+    <!-- Basic NavBar End
+
+     -->
 
 </div>
 
