@@ -48,3 +48,17 @@ npm install --save-dev babel-loader
   * Research hosting options - AWS Lighthouse may be enough?
   * Research usage of ti.to for ticketing: https://ti.to/docs/integrations
   * Research building out of an email subscription service
+
+
+
+### MVP for Website
+
+* Home, Info, Gallery, Schedule
+  * Is able to sign up for a newsletter which can be moved around
+  * This newsletter would be the source of truth to the information
+* Payment makes you fill out the information you need to pay
+  * Do not necessarily need accounts on the information
+  * Look in to the tito integration
+  * Questionnaire goes along with the submission form
+* Self-service for the tickets
+* Newsletter could be sounding board for non-official events
