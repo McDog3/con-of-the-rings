@@ -2,8 +2,7 @@ const path = require("path");
 const jsDirectory = "./src/main/resources/static/js";
 
 module.exports = {
-    entry: {home: jsDirectory + '/home.js',
-            login: jsDirectory + '/login.js'},
+    entry: {home: jsDirectory + '/home.js'},
     module: {
         rules: [
             {

@@ -8,7 +8,7 @@ export default class NavBar extends React.Component {
         return (
             <nav className="navbar navbar-expand-md navbar-light bg-light fixed-top">
                 <a href="/home">COTR LOGO</a>
-                <button className="navbar-toggler" type="button" data-toggle="collapse"
+                <button className="navbar-toggler ml-auto" type="button" data-toggle="collapse"
                         data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
@@ -37,16 +37,16 @@ function NavDropdownMenu(props) {
                 <a className="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                    aria-expanded="false">Account</a>
                 <div className="dropdown-menu">
-                    <NavDropdownMenuLink href={"#"} title={"Profile"} />
+                    <NavDropdownMenuLink href={"/account"} title={"Profile"} />
                     <NavDropdownMenuLink href={"#"} title={"Purchases"} />
                     <div className="dropdown-divider"></div>
-                    <NavDropdownMenuLink href={"#"} title={"Logout"} onClick={props.onClick}/>
+                    <NavDropdownMenuLink href={"/logout"} title={"Logout"} onClick={props.onClick}/>
                 </div>
             </li>
         );
     } else {
         return (
-            <NavLink href={"/login"} title={"Register/Login"} onClick={props.onClick}/>
+            <NavLink href={"/login"} title={"Login"} onClick={props.onClick}/>
         );
     }
 }
