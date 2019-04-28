@@ -61,17 +61,8 @@ public class DraftPackServiceImpl implements DraftPackService {
 
         //Create Card objects from JSON/HTML
         //Build Pack objects from the Cards and JSON/HTML
-        List<Pack> draftPacks = parseDraftPacks(packs);
-
         //Validate the full draft has enough cards and various other properties
-        DraftStatus draftStatus = determineDraftStatus(draftPacks, playerCount);
-
-        while (draftStatus != DraftStatus.DRAFT_VALID) {
-            //Do things
-
-            //FUTURE: do things to add/remove from draftPacks to continue balancing everything
-            draftStatus = DraftStatus.DRAFT_VALID;//Remove when real logic is put into place
-        }
+        List<Pack> draftPacks = finalizeDraftPacks(parseDraftPacks(packs), playerCount);
     }
 
     private List<Pack> parseDraftPacks(String draftPacks) {
@@ -102,6 +93,49 @@ public class DraftPackServiceImpl implements DraftPackService {
             packs.add(new Pack(packId, packName, userId, cards));
         }
         return packs;
+    }
+
+    private List<Pack> finalizeDraftPacks(List<Pack> draftPacks, int playerCount) {
+        final int TOTAL_ATTEMPTS = 100;
+        DraftStatus draftStatus = determineDraftStatus(draftPacks, playerCount);
+        int attempts = 0;
+        while (draftStatus != DraftStatus.DRAFT_VALID && attempts++ < TOTAL_ATTEMPTS) {
+            //Do things
+            switch (draftStatus) {
+                case NEEDS_HEROES:
+                    draftPacks = addHeroesToDraftPacks(draftPacks);
+                    break;
+                case NEEDS_PLAYER_CARDS:
+                    draftPacks = addPlayerCardsToDraftPacks(draftPacks);
+                    break;
+                case NEEDS_SPHERE_BALANCE:
+                    draftPacks = addSphereBalanceToDraftPacks(draftPacks);
+                    break;
+                case DRAFT_VALID:
+                default:
+                    break;
+            }
+
+            //FUTURE: do things to add/remove from draftPacks to continue balancing everything
+            draftStatus = determineDraftStatus(draftPacks, playerCount);
+        }
+
+        return draftPacks;
+    }
+
+    private List<Pack> addHeroesToDraftPacks(List<Pack> draftPacks) {
+        //FUTURE: Implement this
+        return draftPacks;
+    }
+
+    private List<Pack> addPlayerCardsToDraftPacks(List<Pack> draftPacks) {
+        //FUTURE: Implement this
+        return draftPacks;
+    }
+
+    private List<Pack> addSphereBalanceToDraftPacks(List<Pack> draftPacks) {
+        //FUTURE: Implement this
+        return draftPacks;
     }
 
     //Work out internal structure to determine "validity"
