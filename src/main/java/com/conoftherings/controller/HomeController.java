@@ -15,7 +15,8 @@ public class HomeController {
     @GetMapping("/home")
     public String home() {
         //TODO: remove after testing
-        draftPackService.createDraft();
+        int playerCount = 2;
+        draftPackService.createDraft(playerCount);
         return "home";
     }
 }

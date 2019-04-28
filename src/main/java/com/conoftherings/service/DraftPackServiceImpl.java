@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.core.io.Resource;
@@ -22,44 +24,54 @@ import com.conoftherings.playercards.Sphere;
 @Service
 public class DraftPackServiceImpl implements DraftPackService {
 
-    private final static String PACK_ID = "deckId";
-    private final static String PACK_NAME = "name";
-    private final static String PACK_USER_ID = "userId";
-    private final static String CARDS = "cards";
-    private final static String CARD = "card";
-    private final static String CARD_COST = "cost";
-    private final static String CARD_NAME = "name";
-    private final static String CARD_SPHERE = "sphere";
-    private final static String CARD_TYPE = "type";
-    private final static String CARD_QUANTITY = "quantity";
+    private static final String PACK_ID = "deckId";
+    private static final String PACK_NAME = "name";
+    private static final String PACK_USER_ID = "userId";
+    private static final String CARDS = "cards";
+    private static final String CARD = "card";
+    private static final String CARD_COST = "cost";
+    private static final String CARD_NAME = "name";
+    private static final String CARD_SPHERE = "sphere";
+    private static final String CARD_TYPE = "type";
+    private static final String CARD_QUANTITY = "quantity";
 
     @Value("classpath:static/json/draft-packs.json")
-    Resource resourceFile;
+    private Resource resourceFile;
+
+    private Logger logger = LoggerFactory.getLogger(DraftPackServiceImpl.class);
 
     @Override
-    public void createDraft() {
+    public void createDraft(int playerCount) {
         //TODO: DraftPackManager logic
 
         //Parse JSON/HTML
 
-        InputStream resource = null;
+        InputStream resource;
+        String packs = "";
         try {
             resource = resourceFile.getInputStream();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(resource));
 
-            String packs = reader.lines().collect(Collectors.joining("\n"));
-            System.out.println(packs);
-            parseDraftPacks(packs);
+            packs = reader.lines().collect(Collectors.joining("\n"));
+            logger.debug(packs);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         //Create Card objects from JSON/HTML
-
         //Build Pack objects from the Cards and JSON/HTML
+        List<Pack> draftPacks = parseDraftPacks(packs);
 
         //Validate the full draft has enough cards and various other properties
+        DraftStatus draftStatus = determineDraftStatus(draftPacks, playerCount);
+
+        while (draftStatus != DraftStatus.DRAFT_VALID) {
+            //Do things
+
+            //FUTURE: do things to add/remove from draftPacks to continue balancing everything
+            draftStatus = DraftStatus.DRAFT_VALID;//Remove when real logic is put into place
+        }
     }
 
     private List<Pack> parseDraftPacks(String draftPacks) {
@@ -91,4 +103,41 @@ public class DraftPackServiceImpl implements DraftPackService {
         }
         return packs;
     }
+
+    //Work out internal structure to determine "validity"
+    private DraftStatus determineDraftStatus(List<Pack> draftPacks, int playerCount) {
+        List<Card> allDraftCards = draftPacks.stream().map(Pack::getCards).flatMap(List::stream).collect(Collectors.toList());
+        long totalCardCount = allDraftCards.size();
+
+        //1 - We need 6[9?] * playerCount heroes
+        long heroCards = allDraftCards.stream().filter(card -> card.getType() == CardType.HERO).count();
+        if (heroCards < 6 * playerCount) {
+            //we have failed at achieving enough heroes to pass the draft
+            return DraftStatus.NEEDS_HEROES;
+        }
+
+        //2 - We need at least 70 * playerCount player cards
+        long playerDeckCards = allDraftCards.stream().filter(card -> card.getType() != CardType.HERO).count();
+        if (playerDeckCards < 70 * playerCount) {
+            //we have failed at achieving enough player deck cards to pass the draft
+            return DraftStatus.NEEDS_PLAYER_CARDS;
+        }
+
+        //3 - Each sphere should not have any less than 20% representation
+        for (Sphere sphere: Sphere.values()) {
+            long sphereCount = draftPacks.stream().map(Pack::getCards).flatMap(List::stream).filter(card -> card.getSphere() == sphere).count();
+            if (sphereCount / totalCardCount < 0.2) {
+                //we have failed at achieving a good sphere balance ratio!
+                //FUTURE: do something about this
+                return DraftStatus.NEEDS_SPHERE_BALANCE;
+            }
+        }
+
+        return DraftStatus.DRAFT_VALID;
+    }
+
+    private enum DraftStatus {
+        NEEDS_HEROES, NEEDS_PLAYER_CARDS, NEEDS_SPHERE_BALANCE, DRAFT_VALID;
+    }
+
 }

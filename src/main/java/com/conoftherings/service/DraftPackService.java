@@ -2,5 +2,5 @@ package com.conoftherings.service;
 
 public interface DraftPackService {
 
-    void createDraft();
+    void createDraft(int playerCount);
 }
