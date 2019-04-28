@@ -9,8 +9,7 @@ public enum CardType {
     ATTACHMENT("Attachment"),
     EVENT("Event"),
     SIDE_QUEST("Side Quest"),
-    AGENDA("Agenda");
-    //TODO: remember what the new card type is (instead of 'agenda')...
+    CONTRACT("Contract");
 
     private final String description;
 
