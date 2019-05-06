@@ -32,6 +32,7 @@ configurations {
 }
 
 dependencies {
+	//Spring Boot
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
@@ -40,8 +41,10 @@ dependencies {
 //	implementation('org.springframework.session:spring-session-core')
 //	implementation('org.springframework.session:spring-session-jdbc')
 //	implementation("org.springframework.boot:spring-boot-starter-security")
-
-
+	//JSON
+	implementation('com.googlecode.json-simple:json-simple:1.1')
+	implementation('com.google.code.gson:gson:2.8.5')
+	//Testing
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation("org.assertj:assertj-core:3.11.1")
 
