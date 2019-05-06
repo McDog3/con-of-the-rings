@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum CardType {
-    HERO("Hero"),
-    ALLY("Ally"),
-    ATTACHMENT("Attachment"),
-    EVENT("Event"),
-    SIDE_QUEST("Side Quest"),
-    CONTRACT("Contract");
+    HERO("hero"),
+    ALLY("ally"),
+    ATTACHMENT("attachment"),
+    EVENT("event"),
+    SIDE_QUEST("side_quest"),
+    CONTRACT("contract");
 
     private final String description;
 

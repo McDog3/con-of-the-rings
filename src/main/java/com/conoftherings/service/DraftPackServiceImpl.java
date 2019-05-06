@@ -18,13 +18,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.conoftherings.draft.Pack;
 import com.conoftherings.playercards.Card;
 import com.conoftherings.playercards.CardType;
 import com.conoftherings.playercards.Sphere;
-
-import jdk.nashorn.internal.runtime.options.Option;
 
 @Service
 public class DraftPackServiceImpl implements DraftPackService {
@@ -55,6 +54,8 @@ public class DraftPackServiceImpl implements DraftPackService {
         //TODO: DraftPackManager logic
 
         //Parse JSON/HTML
+//        Map<String, Object> deckJSON = getDeckList("11924");
+//        Map<String, Object> cardJSON = getCardDetails("05001");
 
         InputStream resource;
         String packs = "";
@@ -78,6 +79,44 @@ public class DraftPackServiceImpl implements DraftPackService {
         List<Pack> draftPacks = determineUsedDraftPacks(allDraftPacks, playerCount);
     }
 
+
+
+    //--------------------------------TODO: cut below from service?
+//    private Map<String, Object> getDeckList(String deckId) {
+//        //Implemented with RingsDB
+//        final String uri = "http://ringsdb.com/api/public/decklist/" + deckId;
+//
+//        RestTemplate restTemplate = new RestTemplate();
+//        String result = restTemplate.getForObject(uri, String.class);
+//
+//        BasicJsonParser parser = new BasicJsonParser();
+//        Map<String, Object> deckJSON = parser.parseMap(result);
+//
+//        return deckJSON;
+//    }
+//
+//    private Map<String, Object> getCardDetails(String cardId) {
+//
+//        final String uri = "http://ringsdb.com/api/public/card/" + cardId;
+//
+//        RestTemplate restTemplate = new RestTemplate();
+//        String result = restTemplate.getForObject(uri, String.class);
+//
+//        BasicJsonParser parser = new BasicJsonParser();
+//        Map<String, Object> cardJSON = parser.parseMap(result);
+//
+//        return cardJSON;
+//
+//    }
+    //--------------------------------TODO: cut above from service?
+
+
+
+    /**
+     *
+     * @param draftPacks
+     * @return
+     */
     private List<Pack> parseDraftPacks(String draftPacks) {
         BasicJsonParser parser = new BasicJsonParser();
         List<Pack> packs = new ArrayList<>();
