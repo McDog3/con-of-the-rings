@@ -25,7 +25,7 @@ import com.google.gson.GsonBuilder;
 
 /**
  * This is a utility class to rebuild the src/main/resources/static/json/draft-packs.json
- *
+ * <p/>
  * Draft packs are assembled using a deck id given on RingsDB, stored in
  * {@link DraftPackConstants}. Those deck id's are used to call out to the RingsDB API
  * to retrieve the information related to each card and deck. This allows flexibility

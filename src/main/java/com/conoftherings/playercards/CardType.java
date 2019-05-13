@@ -8,7 +8,7 @@ public enum CardType {
     ALLY("ally"),
     ATTACHMENT("attachment"),
     EVENT("event"),
-    SIDE_QUEST("side_quest"),
+    SIDE_QUEST("player-side-quest"),
     CONTRACT("contract");
 
     private final String description;

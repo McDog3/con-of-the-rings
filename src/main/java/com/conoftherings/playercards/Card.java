@@ -1,5 +1,7 @@
 package com.conoftherings.playercards;
 
+import java.util.Objects;
+
 public class Card {
 
     private final int cost;
@@ -34,5 +36,22 @@ public class Card {
 
     public String getImage() {
         return image;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return getCost() == card.getCost() &&
+                getName().equals(card.getName()) &&
+                getSphere() == card.getSphere() &&
+                getType() == card.getType() &&
+                getImage().equals(card.getImage());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCost(), getName(), getSphere(), getType(), getImage());
     }
 }
