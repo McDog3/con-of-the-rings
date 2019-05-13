@@ -24,20 +24,10 @@ import com.conoftherings.draft.Pack;
 import com.conoftherings.playercards.Card;
 import com.conoftherings.playercards.CardType;
 import com.conoftherings.playercards.Sphere;
+import com.conoftherings.util.JSONUtil;
 
 @Service
 public class DraftPackServiceImpl implements DraftPackService {
-
-    private static final String PACK_ID = "deckId";
-    private static final String PACK_NAME = "name";
-    private static final String PACK_USER_ID = "userId";
-    private static final String CARDS = "cards";
-    private static final String CARD = "card";
-    private static final String CARD_COST = "cost";
-    private static final String CARD_NAME = "name";
-    private static final String CARD_SPHERE = "sphere";
-    private static final String CARD_TYPE = "type";
-    private static final String CARD_QUANTITY = "quantity";
 
     @Value("classpath:static/json/draft-packs.json")
     private Resource resourceFile;
@@ -72,7 +62,7 @@ public class DraftPackServiceImpl implements DraftPackService {
 
         //Create Card objects from JSON/HTML
         //Build Pack objects from the Cards and JSON/HTML
-        List<Pack> allDraftPacks = parseDraftPacks(packs);
+        List<Pack> allDraftPacks = JSONUtil.parseDraftPacks(packs);
         Collections.shuffle(allDraftPacks);
 
         //Validate the full draft has enough cards and various other properties
@@ -109,43 +99,6 @@ public class DraftPackServiceImpl implements DraftPackService {
 //
 //    }
     //--------------------------------TODO: cut above from service?
-
-
-
-    /**
-     *
-     * @param draftPacks
-     * @return
-     */
-    private List<Pack> parseDraftPacks(String draftPacks) {
-        BasicJsonParser parser = new BasicJsonParser();
-        List<Pack> packs = new ArrayList<>();
-        List<Map<String, Object>> packsJSON = parser.parseList(draftPacks).stream().map(object -> parser.parseMap((String)object)).collect(Collectors.toList());
-
-        for (Map<String, Object> pack: packsJSON) {
-            int packId = Integer.parseInt((String) pack.get(PACK_ID));
-            String packName = (String) pack.get(PACK_NAME);
-            String userId = (String) pack.get(PACK_USER_ID);
-            List<Map<String, Object>> cardsJSON = ((List<Object>) pack.get(CARDS)).stream().map(card -> parser.parseMap((String) card)).collect(Collectors.toList());
-            List<Card> cards = new ArrayList<>();
-
-            for (Map<String, Object> card: cardsJSON) {
-                Map<String, Object> cardDetails = (Map<String, Object>) card.get(CARD);
-                int cost = Integer.parseInt((String) cardDetails.getOrDefault(CARD_COST, "0"));
-                String cardName = (String) cardDetails.get(CARD_NAME);
-                Sphere sphere = Sphere.valueOf((String) cardDetails.getOrDefault(CARD_SPHERE, "LEADERSHIP"));
-                CardType cardType = CardType.determineFromDescription((String) cardDetails.getOrDefault(CARD_TYPE, "ALLY"));
-                String image = "";
-                Long totalQuantity = (Long) card.get(CARD_QUANTITY);
-
-                for (int cardNum = 0; cardNum < totalQuantity.intValue(); cardNum++) {
-                    cards.add(new Card(cost, cardName, sphere, cardType, image));
-                }
-            }
-            packs.add(new Pack(packId, packName, userId, cards));
-        }
-        return packs;
-    }
 
     private List<Pack> determineUsedDraftPacks(List<Pack> allDraftPacks, int playerCount) {
         final int TOTAL_ATTEMPTS = 200;

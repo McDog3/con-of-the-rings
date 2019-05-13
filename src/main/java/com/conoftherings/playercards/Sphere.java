@@ -6,7 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum Sphere {
-    LEADERSHIP("leadership"), LORE("lore"), SPIRIT("spirit"), TACTICS("tactics");
+    LEADERSHIP("leadership"), LORE("lore"), SPIRIT("spirit"), TACTICS("tactics"), NEUTRAL("neutral");
 
     private String description;
 
