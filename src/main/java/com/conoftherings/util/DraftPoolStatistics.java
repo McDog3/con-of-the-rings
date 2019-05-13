@@ -1,14 +1,8 @@
-/**
- * DraftPoolStatistics
- * Copyright (c) 2019, FastBridge Learning LLC
- * Created on 2019-05-11
- */
 package com.conoftherings.util;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +12,11 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.json.BasicJsonParser;
 
 import com.conoftherings.draft.Pack;
 import com.conoftherings.playercards.Card;
 import com.conoftherings.playercards.CardType;
 import com.conoftherings.playercards.Sphere;
-
-import javafx.util.Pair;
 
 public class DraftPoolStatistics {
 
