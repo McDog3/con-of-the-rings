@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -34,18 +35,9 @@ public class DraftPackServiceImpl implements DraftPackService {
 
     private Logger logger = LoggerFactory.getLogger(DraftPackServiceImpl.class);
 
-    //TODO: To retrieve data directly from RingsDB - use their api:
-    //located  - https://ringsdb.com/api/doc
-    //examples - https://ringsdb.com/api/public/decklist/11924
-    //examples - https://ringsdb.com/api/public/card/05001
-
     @Override
     public void createDraft(int playerCount) {
         //TODO: DraftPackManager logic
-
-        //Parse JSON/HTML
-//        Map<String, Object> deckJSON = getDeckList("11924");
-//        Map<String, Object> cardJSON = getCardDetails("05001");
 
         InputStream resource;
         String packs = "";
@@ -57,7 +49,7 @@ public class DraftPackServiceImpl implements DraftPackService {
             packs = reader.lines().collect(Collectors.joining("\n"));
             logger.debug(packs);
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error("Could not read draft-packs json", e);
         }
 
         //Create Card objects from JSON/HTML
@@ -67,38 +59,30 @@ public class DraftPackServiceImpl implements DraftPackService {
 
         //Validate the full draft has enough cards and various other properties
         List<Pack> draftPacks = determineUsedDraftPacks(allDraftPacks, playerCount);
+
+        //TODO: change structure of creating draft packs a bit.
+        //Step 1: Grab a pack from `allDraftPacks`
+        //Step 2: Check that pack against the current draft contents
+        //Step 3a: If it matches all criteria (listed elsewhere), add to draft and remove from `allDraftPacks`
+        //Step 3b: Else, grab another pack and go back to Step 2
+        //Step 4: After adding pack to draft, check draft validity. If valid, go to Step 5 otherwise Step 1
+        //Step 5: Return final draft contents
+        //The criteria to be added to the draft is as follows:
+        //1 - Hero does not already exist in draft (?) [Either I allow for multiple packs-worth of "Gandalf Guy" cards or we strictly allow one user's "Gandalf Guy" pack in the draft]
+        //2 - The pack would add to the total player cards in the draft (ie not everything is a duplicate)
+        //3 - The pack would keep the spheres in relative balance
+        //
     }
 
-
-
-    //--------------------------------TODO: cut below from service?
-//    private Map<String, Object> getDeckList(String deckId) {
-//        //Implemented with RingsDB
-//        final String uri = "http://ringsdb.com/api/public/decklist/" + deckId;
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//        String result = restTemplate.getForObject(uri, String.class);
-//
-//        BasicJsonParser parser = new BasicJsonParser();
-//        Map<String, Object> deckJSON = parser.parseMap(result);
-//
-//        return deckJSON;
-//    }
-//
-//    private Map<String, Object> getCardDetails(String cardId) {
-//
-//        final String uri = "http://ringsdb.com/api/public/card/" + cardId;
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//        String result = restTemplate.getForObject(uri, String.class);
-//
-//        BasicJsonParser parser = new BasicJsonParser();
-//        Map<String, Object> cardJSON = parser.parseMap(result);
-//
-//        return cardJSON;
-//
-//    }
-    //--------------------------------TODO: cut above from service?
+    private List<Pack> determineDraft(List<Pack> allPacks, int playerCount) {
+        List<Pack> draftPool = new ArrayList<>();
+        //Select a random pack
+        Random random = new Random();
+        Pack potentialDraftPack = allPacks.get(random.nextInt(allPacks.size()));
+        //Check this pack against the current draftPool
+        //TODO: Begin using the new Draft.java concept to keep track of these concepts
+        return draftPool;
+    }
 
     private List<Pack> determineUsedDraftPacks(List<Pack> allDraftPacks, int playerCount) {
         final int TOTAL_ATTEMPTS = 200;
