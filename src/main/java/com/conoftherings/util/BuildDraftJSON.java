@@ -7,10 +7,13 @@ package com.conoftherings.util;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +30,7 @@ import com.google.gson.GsonBuilder;
  * This is a utility class to rebuild the src/main/resources/static/json/draft-packs.json
  * <p/>
  * Draft packs are assembled using a deck id given on RingsDB, stored in
- * {@link DraftPackConstants}. Those deck id's are used to call out to the RingsDB API
+ * draft.properties. Those deck id's are used to call out to the RingsDB API
  * to retrieve the information related to each card and deck. This allows flexibility
  * to update draft packs through RingsDB and use this utility to synchronize our
  * draft-packs.json with that information.
@@ -38,14 +41,18 @@ import com.google.gson.GsonBuilder;
  */
 public class BuildDraftJSON {
 
+    private final static String RINGS_DB_VIEW_DECK_URL = "https://ringsdb.com/deck/view/";
+    private final static String RINGS_DB_VIEW_CARD_URL = "http://ringsdb.com/api/public/card/";
+    private final static String DRAFT_PROPERTIES_LOCATION = "/draft.properties";
     private final static String DRAFT_LOCATION = "src/main/resources/static/json/";
     private final static String DECK_VIEW_START = "app.deck.init\\(\\{";
+    private final static Pattern DECK_VIEW_PATTERN = Pattern.compile(DECK_VIEW_START);
     private final static int DECK_VIEW_START_OFFSET = 14;
     private final static String DECK_VIEW_END = "});";
-    private final static Pattern DECK_VIEW_PATTERN = Pattern.compile(DECK_VIEW_START);
+
 
     public static void main(String[] args) {
-        List<String> allDeckIds = DraftPackConstants.getAllDeckIds();
+        List<String> allDeckIds = retrieveAllDeckIds();
         JSONArray draftPackArray = new JSONArray();
         Map<String, JSONObject> cardCache = new HashMap<>();//A cache allows us to not call out to RingsDB for duplicate cards
 
@@ -62,6 +69,24 @@ public class BuildDraftJSON {
         saveDraftPacksToFile(draftPackArray);
 	}
 
+	private static List<String> retrieveAllDeckIds() {
+        List<String> deckIds = new ArrayList<>();
+        Properties draftProperties = new Properties();
+        InputStream inputStream = BuildDraftJSON.class.getResourceAsStream(DRAFT_PROPERTIES_LOCATION);
+        try {
+            draftProperties.load(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not load draft properties file", e);
+        }
+
+        List<String> userIds = parseStringArray(draftProperties.getProperty("user.ids"));
+        for (String userId: userIds) {
+            List<String> userDeckIds = parseStringArray(draftProperties.getProperty("user." + userId + ".packs"));
+            deckIds.addAll(userDeckIds);
+        }
+        return deckIds;
+    }
+
 	private static void saveDraftPacksToFile(JSONArray draftPackArray) {
         String outputJSON = new GsonBuilder().setPrettyPrinting().create().toJson(draftPackArray);
 
@@ -74,8 +99,7 @@ public class BuildDraftJSON {
     }
 
     private static JSONObject retrieveDeckJSON(String deckId) {
-//        final String uri = "http://ringsdb.com/api/public/decklist/" + deckId;
-        final String uri = "https://ringsdb.com/deck/view/" + deckId;
+        final String uri = RINGS_DB_VIEW_DECK_URL + deckId;
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate.getForObject(uri, String.class);
         JSONObject jsonObject = null;
@@ -86,7 +110,7 @@ public class BuildDraftJSON {
             String resultSubstring = result.substring(startIndex);
             int endIndex = resultSubstring.indexOf(DECK_VIEW_END) + 1;
             String deckResult = resultSubstring.substring(0, endIndex);
-            jsonObject = parseBlob(deckResult);
+            jsonObject = parseString(deckResult);
         }
         return jsonObject;
     }
@@ -103,11 +127,11 @@ public class BuildDraftJSON {
             if (cardCache.containsKey(cardId)) {
                 cardJSON = cardCache.get(cardId);
             } else {
-                String uri = "http://ringsdb.com/api/public/card/" + cardEntry.getKey();
+                String uri = RINGS_DB_VIEW_CARD_URL + cardEntry.getKey();
                 RestTemplate restTemplate = new RestTemplate();
                 String result = restTemplate.getForObject(uri, String.class);
 
-                cardJSON = parseBlob(result);
+                cardJSON = parseString(result);
                 cardCache.put(cardId, cardJSON);
             }
             cardsJSON.add(cardJSON);
@@ -148,7 +172,11 @@ public class BuildDraftJSON {
         return draftPack;
     }
 
-    private static JSONObject parseBlob(String result) {
+    private static List<String> parseStringArray(String propertyString) {
+        return Arrays.asList(propertyString.split(","));
+    }
+
+    private static JSONObject parseString(String result) {
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject;
         try {
