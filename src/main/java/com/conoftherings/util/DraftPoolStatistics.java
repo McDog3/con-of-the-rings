@@ -29,6 +29,8 @@ public class DraftPoolStatistics {
         return cardPredicate;
     };
 
+    private final static JSONUtil jsonUtil = new JSONUtil();
+
     //We need 70 player cards + 5 heroes per player in the draft -
     //Maximum 4 players = 280 player cards (9*35=315 total) + 20 heroes (9*5=45 total)
 
@@ -39,7 +41,10 @@ public class DraftPoolStatistics {
         //Retrieve the draft-packs.json
         String packs = retrieveDraftPacksJson();
         //Parse the json into Pack/Card objects
-        List<Pack> allDraftPacks = JSONUtil.parseDraftPacks(packs);
+        List<Pack> allDraftPacks = jsonUtil.parseDraftPacks(packs);
+
+        //Analysis on all packs
+        System.out.println("Overall Pack Count: " + allDraftPacks.size());
 
         //Analysis on all pack cards
         List<Card> totalCards = allDraftPacks.stream().map(Pack::getCards).flatMap(List::stream).collect(Collectors.toList());
@@ -107,10 +112,6 @@ public class DraftPoolStatistics {
 
 
         //4. Uniqueness?
-
-        //5. Most common cards per sphere? per type?
-
-
         Long totalHeroes = totalCards.stream().filter(card -> card.getType() == CardType.HERO).count();
         Long distinctHeroes = totalCards.stream().filter(card -> card.getType() == CardType.HERO).distinct().count();
 
@@ -120,6 +121,14 @@ public class DraftPoolStatistics {
         System.out.println("Total heroes: " + totalHeroes + " Distinct Heroes: " + distinctHeroes);
         System.out.println("Total player: " + totalPlayer + " Distinct player: " + distinctPlayer);
 
+        //5. Most common cards per sphere? per type?
+
+        //6. Number of heroes used per pack
+        Map<Long, Long> heroCountPerPack = allDraftPacks.stream().collect(Collectors.groupingBy(pack -> pack.getCards().stream().filter(Card::isHero).count(), Collectors.counting()));
+
+        for (Map.Entry<Long, Long> entry: heroCountPerPack.entrySet()) {
+            System.out.println("Total packs with " + entry.getKey() + " heroes: " + entry.getValue());
+        }
     }
 
     private static Map<Sphere, Statistic> determineSphereStatistic(List<Card> cards, Function<Sphere, Predicate<Card>> spherePredicateFunction) {
