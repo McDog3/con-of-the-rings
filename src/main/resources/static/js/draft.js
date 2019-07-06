@@ -1,6 +1,3 @@
-// import LoginControl from "@components/LoginControl";
-import NavBar from "@components/NavBar";
+import DraftButton from "@components/DraftButton";
 
-// ReactDOM.render(<LoginControl />, document.getElementById('login_container'));
-ReactDOM.render(<NavBar isLoggedIn={false}/>, document.getElementById('cotr_navbar'));
-
+ReactDOM.render(<DraftButton/>, document.getElementById('draft_container'));
