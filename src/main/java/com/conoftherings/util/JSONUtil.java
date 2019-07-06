@@ -13,12 +13,14 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.json.BasicJsonParser;
+import org.springframework.stereotype.Component;
 
 import com.conoftherings.draft.Pack;
 import com.conoftherings.playercards.Card;
 import com.conoftherings.playercards.CardType;
 import com.conoftherings.playercards.Sphere;
 
+@Component
 public class JSONUtil {
 
     private static Logger logger = LoggerFactory.getLogger(JSONUtil.class);
@@ -35,7 +37,7 @@ public class JSONUtil {
     private static final String CARD_QUANTITY = "quantity";
     private static final String CARD_IMAGE = "image";
 
-    public static List<Pack> parseDraftPacks(String draftPacks) {
+    public List<Pack> parseDraftPacks(String draftPacks) {
         BasicJsonParser parser = new BasicJsonParser();
         List<Pack> packs = new ArrayList<>();
         List<Map<String, Object>> packsJSON = parser.parseList(draftPacks).stream().map(object -> parser.parseMap((String)object)).collect(Collectors.toList());
@@ -63,13 +65,17 @@ public class JSONUtil {
         return packs;
     }
 
-    private static int determineCost(String costString, CardType cardType) {
+    private int determineCost(String costString, CardType cardType) {
         int cost = 0;
         if (cardType != CardType.HERO) {
             try {
                 cost = Integer.parseInt(costString);
             } catch (NumberFormatException nfe) {
-                logger.error("Cannot parse cost into string", nfe);
+                if (costString.contains("X") || costString.contains("x")) {
+                    logger.debug("Cost is variable, leaving as 0");
+                } else {
+                    logger.error("Cannot parse cost into string", nfe);
+                }
             }
         }
         return cost;

@@ -10,6 +10,7 @@ public class Card {
     private final CardType type;
     private final String image;
 
+    //TODO: create a version that doesn't contain cost? (ie heroes)
     public Card(int cost, String name, Sphere sphere, CardType type, String image) {
         this.cost = cost;
         this.name = name;
@@ -36,6 +37,10 @@ public class Card {
 
     public String getImage() {
         return image;
+    }
+
+    public boolean isHero() {
+        return type == CardType.HERO;
     }
 
     @Override

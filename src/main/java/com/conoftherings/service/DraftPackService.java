@@ -1,6 +1,9 @@
 package com.conoftherings.service;
 
+import com.conoftherings.draft.Draft;
+import com.conoftherings.draft.Settings;
+
 public interface DraftPackService {
 
-    void createDraft(int playerCount);
+    Draft createDraft(Settings draftSettings);
 }
